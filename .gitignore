@@ -1,0 +1,78 @@
+# =====================
+# Global OS/editor junk
+# =====================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =====================
+# Python / Flask backend
+# =====================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv/
+venv/
+env/
+ENV/
+attendance_env/
+
+# Packaging / build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local databases
+*.sqlite3
+*.db
+*.db-journal
+backend/instance/
+backend/instance/*.db*
+
+# Logs and temp files
+logs/
+*.log
+.tmp/
+.cache/
+
+# Uploads (face images, photos)
+backend/uploads/faces/
+uploads/faces/
+
+# Local environment files
+backend/.env
+
+# =====================
+# Frontend (React / Node)
+# =====================
+frontend/node_modules/
+frontend/build/
+frontend/.env*
+
+# Node logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Misc
+.eslintcache
+.parcel-cache/
+
+# Docker
+# (Keep docker-compose.yml and Dockerfiles tracked)
+# .docker/

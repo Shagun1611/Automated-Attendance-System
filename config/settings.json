@@ -1,0 +1,54 @@
+{
+  "face_recognition": {
+    "tolerance": 0.6,
+    "model": "hog",
+    "max_faces_per_student": 5,
+    "min_confidence_threshold": 0.6,
+    "image_quality": {
+      "min_resolution": [200, 200],
+      "min_face_size": [100, 100],
+      "max_file_size_mb": 5
+    }
+  },
+  "attendance": {
+    "window_minutes": 15,
+    "auto_mark_timeout": 30,
+    "max_students_per_batch": 50
+  },
+  "system": {
+    "timezone": "UTC",
+    "academic_year": "2024-25",
+    "school_start_time": "08:00",
+    "school_end_time": "15:00"
+  },
+  "powerbi": {
+    "workspace_id": "",
+    "dataset_id": "",
+    "refresh_interval": 300,
+    "export_formats": ["excel", "pdf", "csv"]
+  },
+  "notifications": {
+    "email_enabled": false,
+    "sms_enabled": false,
+    "alert_thresholds": {
+      "consecutive_absences": 3,
+      "attendance_rate_threshold": 75
+    }
+  },
+  "security": {
+    "password_policy": {
+      "min_length": 8,
+      "require_uppercase": true,
+      "require_numbers": true,
+      "require_special_chars": false
+    },
+    "session_timeout_hours": 24,
+    "max_failed_attempts": 5,
+    "lockout_duration_minutes": 30
+  },
+  "offline": {
+    "sync_interval": 300,
+    "max_offline_records": 1000,
+    "auto_sync": true
+  }
+}

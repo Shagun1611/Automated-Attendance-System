@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        video {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Camera Access Test</h1>
+    <p>This page will test if your camera is accessible through the browser.</p>
+    
+    <div id="status" class="status info">
+        Click "Start Camera" to begin testing...
+    </div>
+    
+    <button id="startBtn" onclick="startCamera()">Start Camera</button>
+    <button id="stopBtn" onclick="stopCamera()" disabled>Stop Camera</button>
+    <button id="captureBtn" onclick="capturePhoto()" disabled>Capture Photo</button>
+    
+    <br><br>
+    
+    <video id="video" autoplay playsinline style="display: none;"></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    
+    <div id="captured-photo"></div>
+
+    <script>
+        let stream = null;
+        let video = document.getElementById('video');
+        let canvas = document.getElementById('canvas');
+        let status = document.getElementById('status');
+
+        function updateStatus(message, type = 'info') {
+            status.textContent = message;
+            status.className = `status ${type}`;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        async function startCamera() {
+            try {
+                updateStatus('Requesting camera access...', 'info');
+                
+                // Check if getUserMedia is supported
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('getUserMedia is not supported in this browser');
+                }
+
+                const constraints = {
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user'
+                    }
+                };
+
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                video.srcObject = stream;
+                video.style.display = 'block';
+                
+                video.onloadedmetadata = () => {
+                    updateStatus('Camera started successfully! You should see the video feed above.', 'success');
+                    document.getElementById('startBtn').disabled = true;
+                    document.getElementById('stopBtn').disabled = false;
+                    document.getElementById('captureBtn').disabled = false;
+                };
+
+            } catch (error) {
+                console.error('Camera error:', error);
+                
+                let errorMessage = 'Failed to access camera: ';
+                
+                if (error.name === 'NotAllowedError') {
+                    errorMessage += 'Camera permission was denied. Please allow camera access and try again.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMessage += 'No camera device found.';
+                } else if (error.name === 'NotSupportedError') {
+                    errorMessage += 'Camera access not supported in this browser.';
+                } else if (error.name === 'NotReadableError') {
+                    errorMessage += 'Camera is already in use by another application.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                updateStatus(errorMessage, 'error');
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                video.srcObject = null;
+                video.style.display = 'none';
+                
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                document.getElementById('captureBtn').disabled = true;
+                
+                updateStatus('Camera stopped.', 'info');
+            }
+        }
+
+        function capturePhoto() {
+            if (!stream) {
+                updateStatus('Camera not started', 'error');
+                return;
+            }
+
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            context.drawImage(video, 0, 0);
+            
+            const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            
+            const img = document.createElement('img');
+            img.src = imageDataUrl;
+            img.style.maxWidth = '300px';
+            img.style.border = '2px solid green';
+            img.style.borderRadius = '8px';
+            img.style.margin = '10px 0';
+            
+            const capturedDiv = document.getElementById('captured-photo');
+            capturedDiv.innerHTML = '<h3>Captured Photo:</h3>';
+            capturedDiv.appendChild(img);
+            
+            updateStatus('Photo captured successfully!', 'success');
+        }
+
+        // Test for HTTPS requirement
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            updateStatus('Warning: Camera access may require HTTPS. If the camera doesn\'t work, try accessing via HTTPS.', 'error');
+        }
+
+        // Log browser information
+        console.log('Browser:', navigator.userAgent);
+        console.log('Protocol:', location.protocol);
+        console.log('Host:', location.host);
+    </script>
+</body>
+</html>

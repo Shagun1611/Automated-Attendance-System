@@ -1,0 +1,28 @@
+.active-nav-item {
+  background-color: rgba(25, 118, 210, 0.08) !important;
+  border-right: 3px solid #1976d2 !important;
+}
+
+.nav-drawer {
+  height: 100vh;
+  border-right: 1px solid #e0e0e0;
+}
+
+.nav-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-item:hover {
+  background-color: rgba(25, 118, 210, 0.04);
+}
+
+.user-info-section {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+@media (max-width: 768px) {
+  .nav-drawer {
+    position: fixed;
+    z-index: 1300;
+  }
+}
